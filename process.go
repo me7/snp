@@ -62,7 +62,8 @@ func ParseSnpFiles() []byte {
 				log.Fatal(err)
 			}
 
-			prefix := stripCwd
+			prefixWithTxt := strings.ReplaceAll(stripCwd, string(os.PathSeparator), " ")
+			prefix := prefixWithTxt[:len(prefixWithTxt)-4]
 
 			stringContent := strings.TrimRight(strings.TrimLeft(string(rawContent), "\n"), "\n")
 
