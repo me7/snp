@@ -43,6 +43,7 @@ func ParseSnpFiles() []byte {
 		if strings.HasSuffix(filePath, ".txt") {
 			stripCwd := filePath[len(cwd)+1:]
 
+			// scope
 			scopeAttr := ""
 			idx := strings.Index(stripCwd, string(os.PathSeparator))
 			if idx != -1 {
@@ -52,24 +53,24 @@ func ParseSnpFiles() []byte {
 				scopeAttr = ""
 			}
 
-			attribute := attr{
-				Scope:       scopeAttr,
-				Description: stripCwd,
-			}
+			// prefix
+			prefixWithTxt := strings.ReplaceAll(stripCwd, string(os.PathSeparator), " ")
+			prefixWithScope := prefixWithTxt[:len(prefixWithTxt)-4]
+			prefix := prefixWithScope[len(scopeAttr)+1:]
 
+			// description
+			description := prefix
+
+			// body
 			rawContent, readFileErr := ioutil.ReadFile(filePath)
 			if readFileErr != nil {
 				log.Fatal(err)
 			}
-
-			prefixWithTxt := strings.ReplaceAll(stripCwd, string(os.PathSeparator), " ")
-			prefix := prefixWithTxt[:len(prefixWithTxt)-4]
-
 			stringContent := strings.TrimRight(strings.TrimLeft(string(rawContent), "\n"), "\n")
-
 			body := strings.Split(stringContent, "\n")
 
-			item := snippetItem{attribute.Scope, attribute.Description, body, prefix}
+			// item
+			item := snippetItem{scopeAttr, description, body, prefix}
 
 			snippet[prefix] = item
 		}
